@@ -11,16 +11,23 @@ template <typename VERTEX_T, typename EDGE_T, graph_type GRAPH_TYPE_V>
 class tree {
   using graph_t = graph<VERTEX_T, EDGE_T, GRAPH_TYPE_V>;
   using edges_t = std::vector<edge_id_t>;
+  using vertices_t = typename graph_t::vertex_id_to_vertex_t;
 
+
+  
  public:
   tree(graph_t&& graph);
 
   [[nodiscard]] vertex_id_t get_root() const { return root_; }
 
+  [[nodiscard]] void set_root(vertex_id_t i) { root_ = i; }
+
   [[nodiscard]] const graph_t::vertices_t& get_leaves() const { return leaves_; }
 
   [[nodiscard]] edges_t get_edges() const;
 
+  [[nodiscard]] const vertices_t& get_vertices() const;
+    
   [[nodiscard]] bool empty() const { return graph_.vertex_count() == 0; }
 
   [[nodiscard]] graph_t::vertex_t& get_vertex(vertex_id_t vertex_id) {
@@ -51,11 +58,14 @@ class tree {
   }
 
   std::vector<vertex_id_t> get_vertex_ids() const;
+        
     
  private:
   graph_t graph_{};
   vertex_id_t root_{};
   graph_t::vertices_t leaves_{};
+    
+    
 };
 
 template <typename V, typename E, graph_type T>

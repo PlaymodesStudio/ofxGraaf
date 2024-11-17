@@ -34,6 +34,12 @@ tree<VERTEX_T, EDGE_T, GRAPH_TYPE_V>::get_edges() const {
   return result;
 }
 
+template <typename VERTEX_T, typename EDGE_T, graph_type GRAPH_TYPE_V>
+const typename tree<VERTEX_T, EDGE_T, GRAPH_TYPE_V>::vertices_t&
+tree<VERTEX_T, EDGE_T, GRAPH_TYPE_V>::get_vertices() const {
+    return graph_.get_vertices();
+}
+
 template <typename V, typename E, graph_type T>
 tree<V, E, T> tree_from_graph(const graph<V, E, T>& input_graph,
                               const std::vector<edge_id_t>& tree_edges) {

@@ -213,6 +213,16 @@ class graph {
    */
   void remove_edge(vertex_id_t vertex_id_lhs, vertex_id_t vertex_id_rhs);
 
+    /**
+     * Set weights for all edges in the graph
+     *
+     * @param weights Vector of weights matching the number of edges
+     * @throws invalid_argument If weights vector size doesn't match edge count
+     */
+  void set_edges_weights(std::vector<EDGE_T>& weights);
+  
+  std::vector<EDGE_T> get_edges_weights() const;
+    
  private:
   std::unordered_map<vertex_id_t, vertices_t> adjacency_list_{};
 

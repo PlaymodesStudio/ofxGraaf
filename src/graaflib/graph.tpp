@@ -215,4 +215,29 @@ void graph<VERTEX_T, EDGE_T, GRAPH_TYPE_V>::remove_edge(
   std::abort();
 }
 
+template <typename VERTEX_T, typename EDGE_T, graph_type GRAPH_TYPE_V>
+void graph<VERTEX_T, EDGE_T, GRAPH_TYPE_V>::set_edges_weights(
+    std::vector<EDGE_T>& weights) {
+    if (weights.size() != edges_.size()) {
+        throw std::invalid_argument{"Number of weights must match number of edges"};
+    }
+    
+    size_t i = 0;
+    for (auto& [edge_id, edge] : edges_) {
+        edge = weights[i++];
+    }
+}
+
+template <typename VERTEX_T, typename EDGE_T, graph_type GRAPH_TYPE_V>
+std::vector<EDGE_T> graph<VERTEX_T, EDGE_T, GRAPH_TYPE_V>::get_edges_weights() const {
+    std::vector<EDGE_T> weights;
+    weights.reserve(edges_.size());
+
+    for (const auto& [edge_id, edge] : edges_) {
+        weights.push_back(edge);
+    }
+
+    return weights;
+}
+
 }  // namespace graaf

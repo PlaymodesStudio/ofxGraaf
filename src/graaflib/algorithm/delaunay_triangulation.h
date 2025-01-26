@@ -135,11 +135,51 @@ undirected_graph<V, E> delaunay_triangulation(
     const std::vector<V>& points,
     std::function<E(const V&, const V&)> edge_weight_calculator) {
 
-    if (points.size() < 3) {
-        throw std::invalid_argument("Need at least 3 points for triangulation");
+    if (points.empty()) {
+        throw std::invalid_argument("Need at least 1 point for triangulation");
     }
 
     undirected_graph<V, E> result;
+
+//    // Handle single vertex case
+//    if (points.size() == 1) {
+//        result.add_vertex(points[0]);
+//        return result;
+//    }
+
+    // Handle 2-vertex case
+    if (points.size() == 2) {
+        vertex_id_t v1 = result.add_vertex(points[0]);
+        vertex_id_t v2 = result.add_vertex(points[1]);
+        result.add_edge(v1, v2, edge_weight_calculator(points[0], points[1]));
+        return result;
+    }
+
+    // Handle 3 vertices case - check if they are collinear or nearly collinear
+    if (points.size() == 3) {
+        // Use a larger epsilon to catch near-collinear points+
+        float cp = std::abs(detail::cross_product(points[0], points[1], points[2]));
+        if (cp < 0.03){
+            // Sort points by x-coordinate (or y if vertical)
+            std::vector<V> sorted_points = points;
+            std::sort(sorted_points.begin(), sorted_points.end(),
+                [](const V& a, const V& b) {
+                    return std::abs(a.x - b.x) < 1e-10 ? a.y < b.y : a.x < b.x;
+                });
+            
+            // Create vertices
+            vertex_id_t v1 = result.add_vertex(sorted_points[0]);
+            vertex_id_t v2 = result.add_vertex(sorted_points[1]);
+            vertex_id_t v3 = result.add_vertex(sorted_points[2]);
+            
+            // Add edges between consecutive vertices
+            result.add_edge(v1, v2, edge_weight_calculator(sorted_points[0], sorted_points[1]));
+            result.add_edge(v2, v3, edge_weight_calculator(sorted_points[1], sorted_points[2]));
+            
+            return result;
+        }
+    }
+
     std::vector<detail::Triangle<V>> triangles;
 
     // Step 1: Create super triangle
